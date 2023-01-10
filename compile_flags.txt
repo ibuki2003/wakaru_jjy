@@ -1,0 +1,2 @@
+-D__AVR_ATtiny2313__
+-I/usr/avr/include/
