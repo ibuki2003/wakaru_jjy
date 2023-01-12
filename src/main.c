@@ -26,7 +26,7 @@ inline void init() {
   }
 
   lcdwrite(0, 0, 0b00111000); // function set, 8bit, 2line, 5x11
-  lcdwrite(0, 0, 0b00001111); // display, on, cursor, blink
+  lcdwrite(0, 0, 0b00001100); // display, on, cursor off
   lcdwrite(0, 0, 0b00000001); // clear display
   lcdwrite(0, 0, 0b00000110); // entry mode, increment, no shift
 
