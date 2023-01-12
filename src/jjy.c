@@ -1,19 +1,5 @@
 #include "jjy.h"
 
-/**
-  JJY signal "protocol" data
-
-  each value represents seconds
-
-  - 0xff: marker, 0.2s pulse
-  - 0xf0: constantly '0'
-  - else:
-    upper 4 bits: byte position of data
-    lower 4 bits: bit position of data (i.e. bit mask)
-
-  yydddwhhmmlpr
-  0123456789abc
-  */
 const uint8_t JJY_TABLE[] = {
   0xff, // M
   0x84, 0x82, 0x81, // minute 10
