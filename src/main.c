@@ -33,8 +33,22 @@ inline void init() {
   _delay_ms(100);
 }
 
+const uint8_t SPLASH_TEXT[] =
+  "   wakaru JJY   "
+  " [JJY receiver] ";
+
 int main() {
   init();
+
+  // splash screen
+  for (uint8_t i = 0; i < 16; ++i) {
+    lcdwrite(1, 0, SPLASH_TEXT[i]);
+  }
+  lcdwrite(0, 0, 0x80 | 0x40); // 2nd row
+  for (uint8_t i = 0; i < 16; ++i) {
+    lcdwrite(1, 0, SPLASH_TEXT[i+16]);
+  }
+  _delay_ms(2000);
 
   // timer init
   // set overflow handler
