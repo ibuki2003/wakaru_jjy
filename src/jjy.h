@@ -6,7 +6,7 @@
 
   each value represents seconds
 
-  - 0xff: marker, 0.2s pulse
+  - 0xf2: marker, 0.2s pulse
   - 0xf0: constantly '0'
   - else:
     upper 4 bits: byte position of data

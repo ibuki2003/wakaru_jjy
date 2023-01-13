@@ -4,8 +4,9 @@
 #include <stdbool.h>
 
 #include "lcd.h"
+#include "decode.h"
 
-inline void init() {
+static inline void init() {
   // ports
   DDRB  = 0b11111111;
   PORTB = 0x00;
@@ -51,10 +52,18 @@ int main() {
   _delay_ms(2000);
 
   // timer init
-  // set overflow handler
+
+  // set overflow handler: 16bit timer #1
+  TCCR1A = 0;
+  TCCR1B = 0b101; // 1024 prescaler
 
   // timer2 init (LCD)
   // set handler
+  TCCR0A = 0;
+  TCCR0B = 0b101; // 1024 prescaler
+
+  TIMSK = 1<<TOIE0; // enable overflow interrupt
+  // handler is in decode.c
 
   bool last = 0;
   while(1) {
@@ -67,13 +76,32 @@ int main() {
       // raise
 
       // check timer
+      if ((TIFR & (1 << TOV1)) || (TCNT1H >= 100)) {
+        // timeout
+        last_state = 2;
+        csr = 0xfe;
+      }
       // timer reset
+      TCNT1 = 0;
+      TIFR = 1<<TOV1; // clear overflow flag
     } else {
       // fall
-
-      // get timer
-      // decode and set buffer
-      // update current when receive success
+      if (TIFR & (1<<TOV1) || (TCNT1H >= 100)) {
+        // timeout
+        last_state = 2;
+        csr = 0xfe;
+      } else {
+        // check timer
+        if (TCNT1H < 10)
+          // marker
+          put_data(2);
+        else if (TCNT1H < 20)
+          // short pulse; 1
+          put_data(1);
+        else
+          // long pulse; 0
+          put_data(0);
+      }
     }
 
   }
