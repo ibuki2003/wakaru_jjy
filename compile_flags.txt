@@ -1,2 +1,2 @@
--D__AVR_ATtiny2313__
+-D__AVR_ATmega8__
 -I/usr/avr/include/

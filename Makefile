@@ -8,7 +8,7 @@ SRCS := $(wildcard $(SRCDIR)/*.c) $(wildcard $(SRCDIR)/*.cpp)
 OBJS := $(addprefix $(OUTDIR)/,$(patsubst %.c,%.o,$(SRCS)))
 DEPS := $(OBJS:%.o=%.d)
 ## AVR デバイス情報
-AVR_CHIP = attiny2313
+AVR_CHIP = atmega8
 AVR_WRIT = avrisp2
 AVR_PORT = /dev/ttyACM0
 ## コンパイラ情報
