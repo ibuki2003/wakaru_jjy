@@ -24,8 +24,8 @@ static inline void init() {
   PORTC = ~0b111; // pull up
 
   // PB: input and PWM output
-  DDRB  = 0b00100000;
-  PORTB = ~0b00100000; // pull up
+  DDRB  = 0b00001000;
+  PORTB = ~0b00001000; // pull up
 
   // LCD setup
   _delay_ms(100);
@@ -33,7 +33,7 @@ static inline void init() {
   lcdwrite(0, 0, 0b00111000); // init
   for (int i = 0; i < 3; ++i) {
     _delay_ms(100);
-    PORTC |= 0b100; _delay_us(1); PINC = 0b100;
+    PORTC |= 0b001; _delay_us(1); PINC = 0b001;
   }
 
   lcdwrite(0, 0, 0b00111000); // function set, 8bit, 2line, 5x11
@@ -76,12 +76,12 @@ int main() {
   TCCR1B = 0b101; // 1024 prescaler
 
 
-  bool last = 0;
+  uint8_t last = 0;
   while(1) {
-    if ((PORTB & 1) == last) continue;
+    if ((PINB & 2) == last) continue;
     // toggle found
 
-    last = !last;
+    last ^= 2;
 
     if ((TIFR & (1 << TOV1)) || (TCNT1H > TIMER1_1100MS)) {
       // unsync anyway if timeover
