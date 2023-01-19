@@ -46,7 +46,7 @@ static inline void init() {
 
 const uint8_t SPLASH_TEXT[] =
   "   wakaru JJY   "
-  "    ｢ﾜｯｶﾙｰ!｣    ";
+  "    \xa2\xdc\xaf\xb6\xd9\xb0!\xa3    "; //"    ｢ﾜｯｶﾙｰ!｣    "
 
 int main() {
   init();
