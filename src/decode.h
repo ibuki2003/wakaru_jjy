@@ -50,8 +50,12 @@ static inline void put_data(uint8_t data) {
         csr = 0xfe;
         last_state = 2;
       } else {
-        buf[p] = buf[p] & ~(1 << q) | (data << q);
+        buf[p] = buf[p] | (data << q);
         ++csr;
+        uint8_t r = JJY_TABLE[csr] >> 4;
+        if (p != r && r != 0xf) {
+          buf[r] = 0;
+        }
       }
     }
     if (csr == 59) {
