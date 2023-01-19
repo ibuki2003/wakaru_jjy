@@ -75,6 +75,11 @@ int main() {
   TCCR1A = 0;
   TCCR1B = 0b101; // 1024 prescaler
 
+  TCCR2 = 0
+    | (1<<WGM21) | (0<<WGM20) // CTC
+    | (0<<COM21) | (0<<COM20) // disabled
+    | (0b010<<CS20); // 8 prescaler
+  OCR2 = 125 - 1; // 4kHz
 
   uint8_t last = 0;
   while(1) {
@@ -92,11 +97,22 @@ int main() {
     if (last) {
       // raise
 
+      // resume timer
+      TCCR2 = 0
+        | (1<<WGM21) | (0<<WGM20) // CTC
+        | (0<<COM21) | (1<<COM20) // toggle
+        | (0b010<<CS20); // 8 prescaler
+
       // timer reset
       TCNT1 = 0;
       TIFR = 1<<TOV1; // clear overflow flag
     } else {
       // fall
+      // pause PWM
+      TCCR2 = 0
+        | (1<<WGM21) | (0<<WGM20) // CTC
+        | (0<<COM21) | (0<<COM20)
+        | (0b010<<CS20); // 8 prescaler
       if (TCNT1H < TIMER1_300MS)
         // marker
         put_data(2);
