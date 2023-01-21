@@ -32,6 +32,10 @@ static inline void put_data(uint8_t data) {
       // got marker
       // wait for 59, 00 markers
       ++csr;
+      if (csr == 0x00) {
+        // reset buf[0]
+        buf[JJY_TABLE[0] >> 4] = 0;
+      }
     } else {
       csr = 0xfe;
     }
@@ -53,16 +57,16 @@ static inline void put_data(uint8_t data) {
         csr = 0xfe;
         last_state = 2;
       } else {
-        buf[p] = buf[p] | (data << q);
+        buf[p] = buf[p] | (data ? q : 0);
         ++csr;
-        uint8_t r = JJY_TABLE[csr] >> 4;
-        if (p != r && r != 0xf) {
-          buf[r] = 0;
-        }
       }
     }
-    if (csr == 59) {
-      csr = 0xff;
+    uint8_t r = JJY_TABLE[csr] >> 4;
+    if (p != r && r != 0xf) {
+      buf[r] = 0;
+    }
+    if (csr == 58) {
+      csr = 0xfe;
 
       // TODO: validate checksum
 

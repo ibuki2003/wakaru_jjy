@@ -1,4 +1,4 @@
-#define F_CPU 8000000UL // 8MHz
+#include "avr/interrupt.h"
 #include "config.h"
 #include <avr/io.h>
 #include <util/delay.h>
@@ -7,7 +7,7 @@
 #include "lcd.h"
 #include "decode.h"
 
-#define TIMER_FREQ (F_CPU / 1024 / 256) // higher byte
+#define TIMER_FREQ (F_CPU / 256 / 256) // higher byte
 // thresholds
 #define TIMER1_1100MS (TIMER_FREQ * 11 / 10)
 #define TIMER1_600MS  (TIMER_FREQ * 6 / 10)
@@ -26,7 +26,7 @@ static inline void init() {
 
   // PB: input and PWM output
   DDRB  = 0b00001000;
-  PORTB = ~0b00001000; // pull up
+  PORTB = ~0b00001010; // pull up
 
   // LCD setup
   _delay_ms(100);
@@ -74,7 +74,7 @@ int main() {
 
   // 16bit timer #1
   TCCR1A = 0;
-  TCCR1B = 0b101; // 1024 prescaler
+  TCCR1B = 0b100; // 256 prescaler
 
   TCCR2 = 0
     | (1<<WGM21) | (0<<WGM20) // CTC
@@ -82,14 +82,17 @@ int main() {
     | (0b010<<CS20); // 8 prescaler
   OCR2 = 125 - 1; // 4kHz
 
+  sei();
+
   uint8_t last = 0;
   while(1) {
     if ((PINB & 2) == last) continue;
     // toggle found
+    uint8_t t = TCNT1 >> 8;
 
     last ^= 2;
 
-    if ((TIFR & (1 << TOV1)) || (TCNT1H > TIMER1_1100MS)) {
+    if ((TIFR & (1 << TOV1)) || (t > TIMER1_1100MS)) {
       // unsync anyway if timeover
       last_state = 2;
       csr = 0xfe;
@@ -114,10 +117,11 @@ int main() {
         | (1<<WGM21) | (0<<WGM20) // CTC
         | (0<<COM21) | (0<<COM20)
         | (0b010<<CS20); // 8 prescaler
-      if (TCNT1H < TIMER1_300MS)
+
+      if (t < TIMER1_300MS)
         // marker
         put_data(2);
-      else if (TCNT1H < TIMER1_600MS)
+      else if (t < TIMER1_600MS)
         // short pulse; 1
         put_data(1);
       else
