@@ -30,6 +30,9 @@ $(OUTDIR)/%.o: %.c $(HEDS)
 write: $(TARGET).hex
 	avrdude -c $(AVR_WRIT) -P $(AVR_PORT) -p $(AVR_CHIP) -U flash:w:$(TARGET).hex:i
 
+write_fuse:
+	avrdude -c $(AVR_WRIT) -P $(AVR_PORT) -p $(AVR_CHIP) -U lfuse:w:0xe4:m -U hfuse:w:0xd9:m
+
 # オブジェクトファイルと実行ファイル及び HEX ファイル削除
 .PHONY: clean
 clean:
