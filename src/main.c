@@ -98,7 +98,7 @@ int main() {
       csr = 0xfe;
     }
 
-    if (last) {
+    if (!last) {
       // raise
 
       // resume timer
