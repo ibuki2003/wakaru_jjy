@@ -84,13 +84,23 @@ int main() {
 
   sei();
 
-  uint8_t last = 0;
+  bool last = 0;
+  uint8_t sigma = 1;
   while(1) {
-    if ((PINB & 2) == last) continue;
+    if (PINB & 2) {
+      ++sigma;
+      if (sigma == 255) sigma = 254;
+    } else {
+      --sigma;
+      if (sigma == 0) sigma = 1;
+    }
+
+    if ((sigma > 128) == last) continue;
     // toggle found
+    last = !last;
+
     uint8_t t = TCNT1 >> 8;
 
-    last ^= 2;
 
     if ((TIFR & (1 << TOV1)) || (t > TIMER1_1100MS)) {
       // unsync anyway if timeover
